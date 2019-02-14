@@ -1,5 +1,5 @@
 {
-  "name": "nodeminecraft",
+  "name": "minecraft_web_cmd",
   "version": "1.0.0",
   "description": "Manage a minecraft server using a web interface",
   "main": "minecraft.js",
@@ -28,5 +28,6 @@
   "dependencies": {
     "express": "^4.16.4",
     "socket.io": "^2.2.0"
-  }
+  },
+  "devDependencies": {}
 }
