@@ -1,2 +1,2 @@
 # NodeMinecraft
-Manage a minecraft server using a node web interface
+Manage a minecraft server using a web interface
