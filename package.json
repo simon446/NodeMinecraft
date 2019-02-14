@@ -1,0 +1,28 @@
+{
+  "name": "nodeminecraft",
+  "version": "1.0.0",
+  "description": "Manage a minecraft server using a web interface",
+  "main": "minecraft.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/froadus/NodeMinecraft.git"
+  },
+  "keywords": [
+    "minecraft",
+    "remote",
+    "server",
+    "management",
+    "bukkit",
+    "spigot",
+    "web"
+  ],
+  "author": "Simon Johansson",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/froadus/NodeMinecraft/issues"
+  },
+  "homepage": "https://github.com/froadus/NodeMinecraft#readme"
+}
