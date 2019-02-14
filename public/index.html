@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+    <title>Minecraft Server Console</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+        }
+
+        form {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        form input {
+            border: 0;
+            padding: 10px;
+            width: 100%;
+            background-color: #484C52;
+            height: 40px;
+            color: #dcddde;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        #stdout {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            height: calc(100vh - 40px);
+            overflow-y: scroll;
+            overflow-x: hidden;
+            background-color: #36393f;
+            color: #dcddde
+        }
+
+        #stdout li {
+            padding: 5px 10px;
+            border-bottom: 1px solid hsla(0, 0%, 100%, .04);
+        }
+    </style>
+</head>
+
+<body>
+    <ul id="stdout"></ul>
+    <form action="">
+        <input id="m" autocomplete="off" />
+    </form>
+</body>
+
+</html>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+    $(function() {
+        var socket = io();
+        $('form').submit(function(e) {
+            e.preventDefault();
+            socket.emit('command', $('#m').val());
+            $('#m').val('');
+            return false;
+        });
+        socket.on('commands', function(cmdArr) {
+            for (let cmd of cmdArr) {
+                $('#stdout').append($('<li>').text(cmd));
+            }
+            $("#stdout").scrollTop($("#stdout")[0].scrollHeight);
+        });
+        socket.on('clear', function() {
+          $('#stdout').html('');
+        });
+    });
+</script>
