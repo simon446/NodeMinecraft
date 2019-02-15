@@ -1,8 +1,0 @@
-{
-  "JAR": "minecraft_server.jar",
-  "XMS": "1024M",
-  "XMX": "2048M",
-  "JAVA_PATH": "java",
-  "CWD": "./minecraft/",
-  "WEB_PORT": 3000
-}
