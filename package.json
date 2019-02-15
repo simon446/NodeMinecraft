@@ -30,6 +30,7 @@
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
+    "particlesjs": "^2.2.3",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "secure-random-string": "^1.1.0",

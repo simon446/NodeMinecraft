@@ -1,4 +1,64 @@
 <% if (!user) { %>
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+<style>
+	html,
+	body {
+	  margin: 0;
+	  padding: 0;
+		background: #3f4c6b; /* Old browsers */
+		background: -moz-radial-gradient(center, ellipse cover, #3f4c6b 0%, #3f4c6b 100%); /* FF3.6-15 */
+		background: -webkit-radial-gradient(center, ellipse cover, #3f4c6b 0%,#3f4c6b 100%); /* Chrome10-25,Safari5.1-6 */
+		background: radial-gradient(ellipse at center, #3f4c6b 0%,#3f4c6b 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3f4c6b', endColorstr='#3f4c6b',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+	}
+
+	.background {
+	  position: absolute;
+	  display: block;
+	  top: 0;
+	  left: 0;
+	  z-index: 0;
+	}
+
+	form {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		z-index: 1;
+		color: #dcddde;
+		width: 40%;
+		max-width: 450px;
+		font-family: 'Roboto Mono', monospace;
+		background-color: rgba(54, 57, 63, 0.6);
+		border-radius: 20px;
+		box-sizing: border-box;
+		padding: 2.5em 4.5em;
+	}
+
+	form label {
+		font-size: 1.1em;
+	}
+
+	form input {
+		border: none;
+		border-radius: 4px;
+		box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+		font-size: 1.2em;
+		padding: 0.2em 0.3em;
+		width: 100%;
+		margin-bottom: 1em;
+		margin-top: 0.5em;
+	}
+
+	form .login {
+		padding: 0.2em 0.6em;
+		font-size: 1.6em;
+		margin: 0 auto;
+		margin-top: 1em;
+		display: block;
+	}
+</style>
 <form action="/login" method="post">
 	<div>
 	<label>Username:</label>
@@ -8,10 +68,20 @@
 	<label>Password:</label>
 	<input type="password" name="password"/>
 	</div>
-	<div>
-	<input type="submit" value="Submit"/>
-	</div>
+	<input class="login" type="submit" value="Submit"/>
 </form>
+<script>
+	window.onload = function() {
+	  Particles.init({
+	    selector: '.background',
+			connectParticles: true,
+			color: '#dcddde',
+
+	  });
+	};
+</script>
+<canvas class="background"></canvas>
+<script src="/static/particles.min.js"></script>
 <% } else { %>
 <!doctype html>
 <html>

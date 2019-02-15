@@ -136,6 +136,8 @@ app.get('/logout',
     res.redirect('/');
   });
 
+app.use('/static', express.static('static'));
+
 http.listen(SETTINGS.WEB_PORT, function(){
   console.log('Visit localhost:'+SETTINGS.WEB_PORT+' using your web browser.');
 });
