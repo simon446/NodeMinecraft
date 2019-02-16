@@ -19,6 +19,7 @@ function generateDefaultConfig() {
     WEB_PORT: 3000,
     USERNAME: 'admin',
     PASSWORD: srs({length: 12}),
+    LOG_LENGTH: 500, // Amount of lines kept in console log
   }
 }
 
@@ -44,9 +45,16 @@ const rl = readline.createInterface({
 });
 let log = [];
 
+function logLine(line) {
+  log.push(line);
+  if (log.length > SETTINGS.LOG_LENGTH) {
+    log = log.slice(log.length - SETTINGS.LOG_LENGTH, log.length);
+  }
+}
+
 
 rl.on('line', line => {
-  log.push(line);
+  logLine(line);
   io.emit('commands', [line]);
 });
 
@@ -103,11 +111,13 @@ io.use(function(socket, next) {
   if (userId !== SETTINGS.USERNAME) {
     socket.emit('login');
     socket.disconnect();
+    return;
   }
+  socket.emit('settings', {LOG_LENGTH: SETTINGS.LOG_LENGTH})
   socket.emit('commands', log);
   socket.on('command', function(cmd){
     server.stdin.write(cmd + '\n');
-    log.push('> '+cmd);
+    logLine('> '+cmd);
     io.emit('commands', ['> '+cmd]);
   });
 });
