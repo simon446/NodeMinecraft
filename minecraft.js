@@ -19,6 +19,7 @@ let log = [];
 
 function logLine(line) {
   log.push(line);
+  console.log(line)
   if (log.length > process.env.LOG_LENGTH) {
     log = log.slice(log.length - process.env.LOG_LENGTH, log.length);
   }
