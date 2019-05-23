@@ -9,36 +9,8 @@ const passport = require('passport');
 const Strategy = require('passport-local').Strategy;
 const srs = require('secure-random-string');
 
-function generateDefaultConfig() {
-  return {
-    JAR: "minecraft_server.jar",
-    XMS: "1024M",
-    XMX: "2048M",
-    JAVA_PATH: "java",
-    CWD: "./minecraft/",
-    WEB_PORT: 3000,
-    USERNAME: 'admin',
-    PASSWORD: srs({length: 12}),
-    LOG_LENGTH: 500, // Amount of lines kept in console log
-  }
-}
-
-let userSettings = {};
-if (fs.existsSync('settings.json'))
-  userSettings = JSON.parse(fs.readFileSync('settings.json', 'utf8'));
-
-let defaultSettings = generateDefaultConfig();
-const SETTINGS = Object.assign(defaultSettings, userSettings);
-fs.writeFileSync('settings.json', JSON.stringify(SETTINGS, null, 2));
-
-if (!fs.existsSync(SETTINGS.CWD)) throw new Error('To run a server you need a minecraft server folder at: '+SETTINGS.CWD+' and a jarfile named: '+SETTINGS.JAR);
-
-/*
-  MINECRAFT SERVER
-*/
-
-const server = spawn(SETTINGS.JAVA_PATH, ['-Xms'+SETTINGS.XMS, '-Xmx'+SETTINGS.XMX, '-jar', SETTINGS.JAR, ,'nogui'], {
-  cwd: SETTINGS.CWD,
+const server = spawn('java', ['-Xms'+process.env.XMS, '-Xmx'+process.env.XMX, '-jar', process.env.JAR, 'nogui'], {
+  cwd: process.env.MC_FOLDER,
 });
 const rl = readline.createInterface({
   input: server.stdout
@@ -47,8 +19,8 @@ let log = [];
 
 function logLine(line) {
   log.push(line);
-  if (log.length > SETTINGS.LOG_LENGTH) {
-    log = log.slice(log.length - SETTINGS.LOG_LENGTH, log.length);
+  if (log.length > process.env.LOG_LENGTH) {
+    log = log.slice(log.length - process.env.LOG_LENGTH, log.length);
   }
 }
 
@@ -62,7 +34,7 @@ rl.on('close', () => process.exit(0));
 
 function findByUsernameOrId(username, cb) {
   if (typeof username !== 'string') return cb(new Error('username needs to be a string'));
-  if (username === SETTINGS.USERNAME) return cb(null, {username: SETTINGS.USERNAME, password: SETTINGS.PASSWORD});
+  if (username === String(process.env.USERNAME)) return cb(null, {username: process.env.USERNAME, password: String(process.env.PASSWORD)});
   return cb(null, false);
 }
 
@@ -108,12 +80,12 @@ io.use(function(socket, next) {
   var userId = false;
   var passport = socket.request.session.passport;
   if (passport) userId = passport.user;
-  if (userId !== SETTINGS.USERNAME) {
+  if (userId !== String(process.env.USERNAME)) {
     socket.emit('login');
     socket.disconnect();
     return;
   }
-  socket.emit('settings', {LOG_LENGTH: SETTINGS.LOG_LENGTH})
+  socket.emit('settings', {LOG_LENGTH: process.env.LOG_LENGTH})
   socket.emit('commands', log);
   socket.on('command', function(cmd){
     server.stdin.write(cmd + '\n');
@@ -148,6 +120,10 @@ app.get('/logout',
 
 app.use('/static', express.static('static'));
 
-http.listen(SETTINGS.WEB_PORT, function(){
-  console.log('Visit localhost:'+SETTINGS.WEB_PORT+' using your web browser.');
+http.listen(process.env.WEB_PORT, function(){
+  console.log('Visit localhost:'+process.env.WEB_PORT+' using your web browser.');
+});
+
+process.on('SIGTERM', function () {
+  server.stdin.write('stop\n');
 });
