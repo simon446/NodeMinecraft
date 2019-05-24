@@ -12,9 +12,8 @@ const srs = require('secure-random-string');
 const server = spawn('java', ['-Xms'+process.env.XMS, '-Xmx'+process.env.XMX, '-jar', process.env.JAR, 'nogui'], {
   cwd: process.env.MC_FOLDER,
 });
-const rl = readline.createInterface({
-  input: server.stdout
-});
+const rl = readline.createInterface({input: server.stdout});
+const er = readline.createInterface({input: server.stderr});
 let log = [];
 
 function logLine(line) {
@@ -23,12 +22,17 @@ function logLine(line) {
   if (log.length > process.env.LOG_LENGTH) {
     log = log.slice(log.length - process.env.LOG_LENGTH, log.length);
   }
+
+  io.emit('commands', [line]);
 }
+
+er.on('line', line => {
+  logLine(line);
+});
 
 
 rl.on('line', line => {
   logLine(line);
-  io.emit('commands', [line]);
 });
 
 rl.on('close', () => process.exit(0));
