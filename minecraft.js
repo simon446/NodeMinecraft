@@ -13,6 +13,7 @@ const srs = require('secure-random-string');
 
 const server = spawn('java', ['-Xms'+process.env.XMS, '-Xmx'+process.env.XMX, '-jar', process.env.JAR, 'nogui'], {
   cwd: process.env.MC_FOLDER,
+  detached: true,
 });
 const rl = readline.createInterface({input: server.stdout});
 const er = readline.createInterface({input: server.stderr});
@@ -21,8 +22,8 @@ let log = [];
 function logLine(line) {
   log.push(line);
   console.log(line)
-  if (log.length > process.env.LOG_LENGTH) {
-    log = log.slice(log.length - process.env.LOG_LENGTH, log.length);
+  if (log.length > Number(process.env.LOG_LENGTH)) {
+    log = log.slice(log.length - Number(process.env.LOG_LENGTH), log.length);
   }
 
   io.emit('commands', [line]);
@@ -92,7 +93,7 @@ io.use(function(socket, next) {
     socket.disconnect();
     return;
   }
-  socket.emit('settings', {LOG_LENGTH: process.env.LOG_LENGTH})
+  socket.emit('settings', {LOG_LENGTH: Number(process.env.LOG_LENGTH)})
   socket.emit('commands', log);
   socket.on('command', function(cmd){
     server.stdin.write(cmd + '\n');
@@ -128,9 +129,26 @@ app.get('/logout',
 app.use('/static', express.static('static'));
 
 http.listen(process.env.WEB_PORT, function(){
-  console.log('Visit localhost:'+process.env.WEB_PORT+' using your web browser.');
+  console.log(`Admin console available at http://localhost:${process.env.WEB_PORT}/`);
+  console.log('Login credentials:')
+  console.log(`Username: ${process.env.USERNAME}`);
+  console.log(`Password: ${process.env.PASSWORD}`);
 });
 
-process.on('SIGTERM', function () {
+// ====================
+//  Exit gracefully
+// ====================
+function stop() {
   server.stdin.write('stop\n');
+  setInterval(() => {
+    server.stdin.write('stop\n');
+  }, 1000);
+}
+
+process.on('SIGINT', function () {
+  stop();
 });
+
+/* process.on('SIGTERM', function () {
+  stop();
+}); */
