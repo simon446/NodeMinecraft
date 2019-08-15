@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const spawn = require('child_process').spawn;
 const express = require('express');
 const app = express();
