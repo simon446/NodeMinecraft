@@ -143,12 +143,22 @@ function stop() {
   setInterval(() => {
     server.stdin.write('stop\n');
   }, 1000);
+  // Force exit after timeout
+  setTimeout(() => {
+    process.exit(0);
+  }, 10000);
 }
 
 process.on('SIGINT', function () {
   stop();
 });
 
-/* process.on('SIGTERM', function () {
+process.on('SIGTERM', function () {
   stop();
-}); */
+});
+
+process.on('message', function(msg) {
+  if (msg == 'shutdown') {
+    stop();
+  }
+});
